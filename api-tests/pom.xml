@@ -33,7 +33,7 @@
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
         <!--Docker configuration-->
-            <!--Database-->
+        <!--Database-->
         <database.container.name>blog_db</database.container.name>
         <postgresdb.image>postgres:13.4-alpine</postgresdb.image>
         <db.hostname>blog-db.docker</db.hostname>
@@ -42,10 +42,10 @@
         <blog.db.password>password</blog.db.password>
         <external.db.port>${random.external.db.port}</external.db.port>
         <internal.db.port>5432</internal.db.port>
-            <!--Docker stats-->
+        <!--Docker stats-->
         <docker-stats-logger.image>kh0ma/docker-stats-logger:0.0.7</docker-stats-logger.image>
         <docker-stats-logger.container.name>docker-stats-logger</docker-stats-logger.container.name>
-            <!--App-->
+        <!--App-->
         <application.container.name>blog_api</application.container.name>
         <application.dockerfile.location>${project.basedir}/../backend</application.dockerfile.location>
         <application.name>application-blog</application.name>
@@ -204,6 +204,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -382,7 +383,8 @@
                         </goals>
                         <configuration>
                             <summaryFiles>
-                                <summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary.xml</summaryFile>
+                                <summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary.xml
+                                </summaryFile>
                             </summaryFiles>
                         </configuration>
                     </execution>
