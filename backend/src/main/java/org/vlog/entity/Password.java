@@ -1,4 +1,4 @@
-package org.step.entity;
+package org.vlog.entity;
 
 import lombok.Data;
 
