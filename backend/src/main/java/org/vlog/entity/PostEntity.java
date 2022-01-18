@@ -19,6 +19,9 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @ManyToMany()
+    @JoinTable(name = "posts_tags",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
     private String createdOn;
     @ManyToOne
