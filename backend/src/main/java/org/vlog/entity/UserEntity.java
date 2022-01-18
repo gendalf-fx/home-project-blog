@@ -26,6 +26,6 @@ public class UserEntity {
     private String email;
     private String password;
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 }

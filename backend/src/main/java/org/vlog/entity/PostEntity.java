@@ -22,8 +22,10 @@ public class PostEntity {
     private List<Tag> tags;
     private String createdOn;
     @ManyToOne
-    // TODO: FIX ME
-//    @JoinTable(name = "author", joinColumns = {""})
+    @JoinTable(name = "authors_posts",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id")
+    )
     private AuthorEntity author;
     @Column(nullable = false)
     private String text;
