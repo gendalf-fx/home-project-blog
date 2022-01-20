@@ -2,6 +2,7 @@ package org.vlog.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.vlog.enums.Role;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,11 +15,19 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Builder
 @Entity
-@Table(name = "author")
-public class AuthorEntity extends BaseEntity {
+public class AccountEntity extends BaseEntity{
     @NonNull
     @Column(nullable = false, unique = true)
-    private String name;
+    private String email;
+
+    @Column(name = "`password`", nullable = false)
+    private String password;
+
+
+    @ManyToOne
+    @Enumerated(value = EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.BLOGGER;
 
     @OneToOne(targetEntity = UserEntity.class)
     private UserEntity user;
@@ -27,7 +36,7 @@ public class AuthorEntity extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        AuthorEntity that = (AuthorEntity) o;
+        AccountEntity that = (AccountEntity) o;
         return id != null && Objects.equals(id, that.id);
     }
 

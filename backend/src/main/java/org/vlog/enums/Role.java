@@ -3,7 +3,7 @@ package org.vlog.enums;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "role", schema = "vlog")
+@Table(name = "role")
 public enum Role {
     BLOGGER, MODERATOR, ADMIN;
     @Id
