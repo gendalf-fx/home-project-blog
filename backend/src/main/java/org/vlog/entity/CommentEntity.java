@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -14,20 +15,25 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Builder
 @Entity
-@Table(name = "comments")
-public class CommentEntity extends BaseEntity{
-     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private AuthorEntity author;
+@Table(name = "`comment`")
+public class CommentEntity extends BaseEntity {
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @NonNull
-    @Column(nullable = false)
+    @Column(nullable = false, name = "text")
     private String text;
 
-    @JoinColumn(columnDefinition = "date-time default CURRENT_DATE()")
-    private String createdOn;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
 
-    private String updatedOn;
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
+    PostEntity post;
 
     @Override
     public boolean equals(Object o) {

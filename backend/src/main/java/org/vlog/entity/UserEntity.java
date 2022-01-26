@@ -2,7 +2,6 @@ package org.vlog.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.vlog.enums.Role;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,14 +13,31 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user")
+@Table(name = "`user`")
 public class UserEntity extends BaseEntity {
+
+    @NonNull
+    @Column(nullable = false, unique = true, name = "name")
+    private String name;
+
+    @NonNull
+    @Column(nullable = false, unique = true, name = "email")
+    private String email;
+
+    @Column(name = "`password`", nullable = false)
+    private String password;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Enumerated(value = EnumType.STRING)
+    @JoinColumn(name = "role_id")
+    @Builder.Default
+    private RoleEntity role = RoleEntity.BLOGGER;
 
 
     @Override
