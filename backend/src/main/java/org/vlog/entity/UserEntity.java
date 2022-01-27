@@ -11,7 +11,6 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "`user`")
 public class UserEntity extends BaseEntity {
@@ -36,7 +35,6 @@ public class UserEntity extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @Enumerated(value = EnumType.STRING)
     @JoinColumn(name = "role_id")
-    @Builder.Default
     private RoleEntity role = RoleEntity.BLOGGER;
 
 

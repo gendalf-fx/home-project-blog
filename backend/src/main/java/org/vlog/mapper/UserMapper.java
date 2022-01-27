@@ -25,7 +25,7 @@ public interface UserMapper {
     List<UserDto> userListToDto(Page<UserEntity> userEntities);
 
 
-//    @Mapping(target="id", source = "oldUser.id")
+    @Mapping(target="id", source = "oldUser.id")
     @Mapping(target="name", source = "updatedUser.name")
     @Mapping(target="firstName", source = "updatedUser.firstName")
     @Mapping(target="lastName", source = "updatedUser.lastName")
