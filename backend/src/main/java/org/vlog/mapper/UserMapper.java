@@ -26,11 +26,11 @@ public interface UserMapper {
 
 
 //    @Mapping(target="id", source = "oldUser.id")
-//    @Mapping(target="name", source = "updatedUser.name")
-//    @Mapping(target="firstName", source = "updatedUser.firstName")
-//    @Mapping(target="lastName", source = "updatedUser.lastName")
-//    @Mapping(target="email", source = "oldUser.email")
-//    @Mapping(target="password", source = "oldUser.password")
-//    @Mapping(target="role", source = "oldUser.role")
-//    UserEntity updateUser(UserDto oldUser, UserDto updatedUser);
+    @Mapping(target="name", source = "updatedUser.name")
+    @Mapping(target="firstName", source = "updatedUser.firstName")
+    @Mapping(target="lastName", source = "updatedUser.lastName")
+    @Mapping(target="email", source = "oldUser.email")
+    @Mapping(target="password", source = "oldUser.password")
+    @Mapping(target="role", source = "oldUser.role")
+    UserEntity updateUser(UserDto oldUser, UserDto updatedUser);
 }

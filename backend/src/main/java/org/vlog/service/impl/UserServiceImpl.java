@@ -1,5 +1,6 @@
 package org.vlog.service.impl;
 
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,18 +20,13 @@ import org.vlog.service.UserService;
 import java.util.List;
 import java.util.Optional;
 
-
+@Data
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository) {
-        this.userMapper = userMapper;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -64,14 +60,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, Long id) {
-        UserEntity userEntity = getUserEntityById(id);
-        userEntity = UserEntity.builder()
-                .name(userDto.getName())
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .email(userDto.getEmail())
-                .password(userEntity.getPassword())
-                .build();
+//        UserEntity userEntity = getUserEntityById(id);
+//        userEntity = UserEntity.builder()
+//                .name(userDto.getName())
+//                .firstName(userDto.getFirstName())
+//                .lastName(userDto.getLastName())
+//                .email(userDto.getEmail())
+//                .password(userEntity.getPassword())
+//                .build();
+//        userRepository.save(userEntity);
+//        return userMapper.userToDto(userEntity);
+        UserDto userById = getUserById(id);
+        UserEntity userEntity = userMapper.updateUser(userById, userDto);
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity);
     }

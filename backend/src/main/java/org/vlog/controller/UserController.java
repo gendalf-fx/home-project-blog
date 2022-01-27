@@ -1,6 +1,5 @@
 package org.vlog.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,7 @@ import org.vlog.service.UserService;
 import java.util.List;
 
 @Data
-@Controller
+@RestController
 @RequestMapping(path = "/users")
 
 public class UserController {
@@ -34,42 +33,42 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping
     public @ResponseBody
-    List<UserDto> getAllUsers(@RequestParam Integer id, @RequestParam String name,
-                              @RequestParam String sort, @RequestParam Integer page_num, @RequestParam Integer page_size) {
+    List<UserDto> getAllUsers(Integer id, String name,
+                              String sort, Integer page_num, Integer page_size) {
         return userService.getAllUsers(sort, page_num, page_size);
     }
 
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping("${id}")
+    @GetMapping("{id}")
     public @ResponseBody
-    UserDto getUserById(@RequestParam Long id) {
+    UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @ResponseStatus(value = HttpStatus.OK)
-    @PutMapping("${id}")
+    @PutMapping("{id}")
     public @ResponseBody
-    UserDto updateUser(@RequestParam Long id, @RequestBody UserDto userDto) {
+    UserDto updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return userService.updateUser(userDto, id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("${id}")
-    public void removeUser(@RequestParam Long id) {
+    @DeleteMapping("{id}")
+    public void removeUser(@PathVariable Long id) {
         userService.removeUser(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("${id}/role")
+    @GetMapping("{id}/role")
     public @ResponseBody
-    RoleDto getUserRoleById(@RequestParam Long id) {
+    RoleDto getUserRoleById(@PathVariable Long id) {
         return userService.getUserRoleById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("${id}/role")
+    @PutMapping("{id}/role")
     public @ResponseBody
-    RoleDto updateUserRole(@RequestParam Long id, @RequestBody RoleDto roleDto) {
+    RoleDto updateUserRole(@PathVariable Long id, @RequestBody RoleDto roleDto) {
         return userService.updateUserRole(roleDto, id);
     }
 
