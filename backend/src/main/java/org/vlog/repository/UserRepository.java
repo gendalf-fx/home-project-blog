@@ -8,4 +8,6 @@ import org.vlog.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByName(String name);
+
+
 }

@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        userDto.setRole(RoleDto.BLOGGER);
         UserEntity userEntity = userMapper.userToEntity(userDto);
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity);
@@ -41,35 +42,30 @@ public class UserServiceImpl implements UserService {
         Integer checkedPageNum = Optional.ofNullable(page_num).orElse(0);
         Integer checkedSize = Optional.ofNullable(page_size).orElse(10);
         Sort.Direction direction = null;
+
         if (checkedSort.contains("-")) {
             direction = Sort.Direction.DESC;
+            checkedSort = checkedSort.substring(1, checkedSort.length());
         } else {
             direction = Sort.DEFAULT_DIRECTION;
+
         }
-        String sortedString = checkedSort.substring(1, checkedSort.length() - 1);
-        Pageable pageable = PageRequest.of(checkedPageNum, checkedSize, Sort.by(sortedString).and(Sort.by(direction)));
+        Pageable pageable = PageRequest.of(checkedPageNum, checkedSize, Sort.by(direction,checkedSort));
         Page<UserEntity> userEntities = userRepository.findAll(pageable);
+
         return userMapper.userListToDto(userEntities);
     }
 
     @Override
     public UserDto getUserById(Long id) {
+        System.out.println(id);
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("Unauthorized"));
+        System.out.println(userEntity);
         return userMapper.userToDto(userEntity);
     }
 
     @Override
     public UserDto updateUser(UserDto userDto, Long id) {
-//        UserEntity userEntity = getUserEntityById(id);
-//        userEntity = UserEntity.builder()
-//                .name(userDto.getName())
-//                .firstName(userDto.getFirstName())
-//                .lastName(userDto.getLastName())
-//                .email(userDto.getEmail())
-//                .password(userEntity.getPassword())
-//                .build();
-//        userRepository.save(userEntity);
-//        return userMapper.userToDto(userEntity);
         UserDto userById = getUserById(id);
         UserEntity userEntity = userMapper.updateUser(userById, userDto);
         userRepository.save(userEntity);

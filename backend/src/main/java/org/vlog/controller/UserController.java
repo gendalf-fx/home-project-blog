@@ -7,9 +7,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.vlog.dto.RoleDto;
 import org.vlog.dto.UserDto;
+import org.vlog.dto.UserDtoDeserializer;
+import org.vlog.exception.custom.GlobalNotFoundException;
 import org.vlog.service.UserService;
 
+import javax.management.relation.Role;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Data
 @RestController
@@ -33,8 +38,8 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping
     public @ResponseBody
-    List<UserDto> getAllUsers(Integer id, String name,
-                              String sort, Integer page_num, Integer page_size) {
+    List<UserDto> getAllUsers(@RequestParam(required = false) Integer id, @RequestParam(required = false) String name,
+                              @RequestParam String sort, @RequestParam Integer page_num, @RequestParam Integer page_size) {
         return userService.getAllUsers(sort, page_num, page_size);
     }
 
@@ -68,7 +73,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("{id}/role")
     public @ResponseBody
-    RoleDto updateUserRole(@PathVariable Long id, @RequestBody RoleDto roleDto) {
+    RoleDto updateUserRole(@PathVariable Long id, @RequestBody UserDtoDeserializer userDtoDeserializer) {
+        RoleDto roleDto = Optional.of(RoleDto.valueOf(userDtoDeserializer.getName().toUpperCase(Locale.ROOT))).orElseThrow(() -> new GlobalNotFoundException("There is no such a role"));
         return userService.updateUserRole(roleDto, id);
     }
 
