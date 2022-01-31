@@ -21,9 +21,11 @@ public interface UserService {
 
     RoleDto getUserRoleById(Long id);
 
-    RoleDto updateUserRole(RoleDto roleDto, Long id);
+    RoleDto updateUserRole(RoleDto.RoleEnum roleDto, Long id);
 
     UserDto changePassword(PasswordDto passwordDto, Long id);
 
     UserDto getUserByName(String name);
+
+    UserDto getCurrentUser();
 }

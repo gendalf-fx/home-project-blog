@@ -3,10 +3,7 @@ package org.vlog.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-import org.vlog.dto.RoleDto;
 import org.vlog.dto.UserDto;
-import org.vlog.entity.RoleEntity;
 import org.vlog.entity.UserEntity;
 
 import java.util.List;
@@ -18,12 +15,7 @@ public interface UserMapper {
 
     UserDto userToDto(UserEntity userEntity);
 
-    RoleEntity toRoleEntity(RoleDto roleDto);
-
-    RoleDto toRoleDto(RoleEntity roleEntity);
-
     List<UserDto> userListToDto(Page<UserEntity> userEntities);
-
 
     @Mapping(target="id", source = "oldUser.id")
     @Mapping(target="name", source = "updatedUser.name")

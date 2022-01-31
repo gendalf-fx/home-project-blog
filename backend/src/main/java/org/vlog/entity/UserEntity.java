@@ -33,8 +33,7 @@ public class UserEntity extends BaseEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-    @Enumerated(value = EnumType.STRING)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 

@@ -1,18 +1,14 @@
 package com.itacademy.tests.users;
 
+import org.openapitools.client.api.UsersApi;
 import com.itacademy.tests.GeneralApi;
-import com.itacademy.tests.utils.ApiClientUtil;
-import com.softserveinc.ita.homeproject.blog.ApiException;
-import com.softserveinc.ita.homeproject.blog.client.api.UsersApi;
-import com.softserveinc.ita.homeproject.blog.client.model.Role;
-import com.softserveinc.ita.homeproject.blog.client.model.User;
+import com.itacademy.tests.utils.ApiClientUtil;;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -5,6 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.vlog.dto.PasswordDto;
 import org.vlog.dto.RoleDto;
@@ -14,9 +17,12 @@ import org.vlog.entity.UserEntity;
 import org.vlog.exception.custom.GlobalNotFoundException;
 import org.vlog.exception.custom.GlobalValidationException;
 import org.vlog.mapper.UserMapper;
+import org.vlog.repository.RoleRepository;
 import org.vlog.repository.UserRepository;
+import org.vlog.security.SecurityUser;
 import org.vlog.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +30,29 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        userRepository.save(new UserEntity("admin", "admin", passwordEncoder.encode("admin"),
+                "admin", "admin", new RoleEntity(null, RoleEntity.RoleEnum.ADMIN)));
+    }
+
     private final UserMapper userMapper;
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDto createUser(UserDto userDto) {
-        userDto.setRole(RoleDto.BLOGGER);
         UserEntity userEntity = userMapper.userToEntity(userDto);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setRole(new RoleEntity(null, RoleEntity.RoleEnum.BLOGGER));
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity);
     }
@@ -50,7 +71,7 @@ public class UserServiceImpl implements UserService {
             direction = Sort.DEFAULT_DIRECTION;
 
         }
-        Pageable pageable = PageRequest.of(checkedPageNum, checkedSize, Sort.by(direction,checkedSort));
+        Pageable pageable = PageRequest.of(checkedPageNum, checkedSize, Sort.by(direction, checkedSort));
         Page<UserEntity> userEntities = userRepository.findAll(pageable);
 
         return userMapper.userListToDto(userEntities);
@@ -88,9 +109,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RoleDto updateUserRole(RoleDto roleDto, Long id) {
+    public RoleDto updateUserRole(RoleDto.RoleEnum roleDto, Long id) {
         UserEntity userEntity = getUserEntityById(id);
-        userEntity.setRole(RoleEntity.valueOf(roleDto.name()));
+        RoleEntity role = roleRepository.findByName(RoleEntity.RoleEnum.valueOf(roleDto.name())).orElseThrow(() -> new GlobalNotFoundException("There is no such role: " + roleDto.name()));
+        userEntity.setRole(role);
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity).getRole();
     }
@@ -105,12 +127,17 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto getUserByName(String name) {
-        UserEntity userEntity = userRepository.findByName(name);
-        if (userEntity != null) {
-            return userMapper.userToDto(userEntity);
-        } else {
-            throw new GlobalValidationException("Validation exception");
-        }
+        return userMapper.userToDto(userRepository.findByName(name).orElseThrow(() -> new GlobalValidationException("Validation exception")));
+
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails)principal).getUsername();
+//        SecurityUser securityUser = SecurityUser.fromPrincipal(principal);
+//        String username = securityUser.getUsername();
+        return userMapper.userToDto(userRepository.findByName(username).orElseThrow(() -> new GlobalValidationException("User is not authorized!")));
     }
 
     private UserEntity getUserEntityById(Long id) {
