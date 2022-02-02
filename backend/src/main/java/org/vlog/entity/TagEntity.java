@@ -25,7 +25,7 @@ public class TagEntity extends BaseEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         TagEntity tag = (TagEntity) o;
-        return id != null && Objects.equals(id, tag.id) || Objects.equals(name, tag.name);
+        return  Objects.equals(name, tag.name);
     }
 
     @Override

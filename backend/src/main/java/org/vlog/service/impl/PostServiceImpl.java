@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.vlog.dto.PostDto;
+import org.vlog.dto.TagDto;
 import org.vlog.entity.PostEntity;
 import org.vlog.entity.TagEntity;
 import org.vlog.entity.UserEntity;
@@ -48,11 +49,15 @@ public class PostServiceImpl implements PostService {
 
         List<TagEntity> oldTags = tagRepository.findAll();
         Set<String> tagsName = oldTags.stream().map(TagEntity::getName).collect(Collectors.toSet());
+
+        Set<TagEntity> collect = oldTags.stream().filter(postEntity.getTags()::contains).collect(Collectors.toSet());
+
+
         Set<TagEntity> newTags = postEntity.getTags().stream()
                 .filter(tagEntity -> !tagsName.contains(tagEntity.getName()))
                 .map(tagRepository::save).collect(Collectors.toSet());
 
-        newTags.addAll(oldTags.stream().filter(tagEntity -> tagsName.contains(tagEntity.getName())).collect(Collectors.toSet()));
+        newTags.addAll(collect);
         postEntity.getTags().clear();
         postEntity.setTags(newTags);
 
