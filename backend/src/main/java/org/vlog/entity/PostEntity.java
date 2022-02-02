@@ -16,12 +16,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Builder
 @Entity
 @Table(name = "`post`")
 public class PostEntity extends BaseEntity {
     @ToString.Exclude
-    @ManyToMany(targetEntity = TagEntity.class, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = TagEntity.class, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "post_tags",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
@@ -31,7 +30,7 @@ public class PostEntity extends BaseEntity {
 
     private LocalDateTime createdOn;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

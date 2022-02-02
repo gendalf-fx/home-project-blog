@@ -17,7 +17,7 @@ public class UserDetailsServicesImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByName(name).orElseThrow(() -> new GlobalNotFoundException("There is no such user with name: " + name));
+        UserEntity user = userRepository.findByName(name).orElseThrow(() -> new GlobalNotFoundException("There isn`t any user with name: " + name));
         return SecurityUser.fromUser(user);
     }
 }

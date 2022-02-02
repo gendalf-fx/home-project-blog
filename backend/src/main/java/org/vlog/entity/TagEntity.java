@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "tag")
 public class TagEntity extends BaseEntity {
     @NonNull
-    @Column(nullable = false, name = "name")
+    @Column(nullable = false, name = "name", unique = true)
     private String name;
 
     @Override
@@ -25,7 +25,7 @@ public class TagEntity extends BaseEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         TagEntity tag = (TagEntity) o;
-        return id != null && Objects.equals(id, tag.id);
+        return id != null && Objects.equals(id, tag.id) || Objects.equals(name, tag.name);
     }
 
     @Override

@@ -17,28 +17,17 @@ import org.vlog.entity.UserEntity;
 import org.vlog.exception.custom.GlobalNotFoundException;
 import org.vlog.exception.custom.GlobalValidationException;
 import org.vlog.mapper.UserMapper;
+import org.vlog.project.util.ProjectUtils;
 import org.vlog.repository.RoleRepository;
 import org.vlog.repository.UserRepository;
-import org.vlog.security.SecurityUser;
 import org.vlog.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 @Data
 @Service
 public class UserServiceImpl implements UserService {
-
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userMapper = userMapper;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        userRepository.save(new UserEntity("admin", "admin", passwordEncoder.encode("admin"),
-                "admin", "admin", new RoleEntity(null, RoleEntity.RoleEnum.ADMIN)));
-    }
 
     private final UserMapper userMapper;
 
@@ -48,39 +37,53 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        roleRepository.saveAll(List.of(
+                new RoleEntity(null, RoleEntity.RoleEnum.MODERATOR), new RoleEntity(null, RoleEntity.RoleEnum.BLOGGER)));
+        userRepository.save(new UserEntity("admin", "admin", passwordEncoder.encode("admin"),
+                "admin", "admin", new RoleEntity(null, RoleEntity.RoleEnum.ADMIN)));
+
+    }
+
     @Override
     public UserDto createUser(UserDto userDto) {
         UserEntity userEntity = userMapper.userToEntity(userDto);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole(new RoleEntity(null, RoleEntity.RoleEnum.BLOGGER));
+        userEntity.setRole(roleRepository.findByName(RoleEntity.RoleEnum.BLOGGER).orElseThrow(() ->
+                new GlobalNotFoundException("This role doesn`t exists!")));
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity);
     }
 
     @Override
-    public List<UserDto> getAllUsers(String sort, Integer page_num, Integer page_size) {
-        String checkedSort = Optional.ofNullable(sort).orElse("-id");
-        Integer checkedPageNum = Optional.ofNullable(page_num).orElse(0);
-        Integer checkedSize = Optional.ofNullable(page_size).orElse(10);
-        Sort.Direction direction = null;
-
-        if (checkedSort.contains("-")) {
-            direction = Sort.Direction.DESC;
-            checkedSort = checkedSort.substring(1, checkedSort.length());
+    public List<UserDto> getAllUsers(Long id, String name, String sort, Integer page_num, Integer page_size) {
+        if (id != null && name != null) {
+            return List.of(userMapper.userToDto(userRepository.findUserEntityByIdAndName(id, name).orElseThrow(() ->
+                    new GlobalNotFoundException("User with id: " + id + " and name: " + name + " doesn`t exist!"))));
+        } else if (id != null) {
+            return List.of(getUserById(id));
+        } else if (name != null) {
+            return List.of(getUserByName(name));
         } else {
-            direction = Sort.DEFAULT_DIRECTION;
+            Pageable pageable = ProjectUtils.pagination(sort, page_num, page_size);
+            Page<UserEntity> userEntities = userRepository.findAll(pageable);
 
+            return userMapper.userListToDto(userEntities);
         }
-        Pageable pageable = PageRequest.of(checkedPageNum, checkedSize, Sort.by(direction, checkedSort));
-        Page<UserEntity> userEntities = userRepository.findAll(pageable);
-
-        return userMapper.userListToDto(userEntities);
     }
+
+
 
     @Override
     public UserDto getUserById(Long id) {
         System.out.println(id);
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("Unauthorized"));
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("User with id: "
+                + id + " doesn`t exists!"));
         System.out.println(userEntity);
         return userMapper.userToDto(userEntity);
     }
@@ -95,7 +98,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeUser(Long id) {
-        userRepository.delete(userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("User not found")));
+        userRepository.delete(userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("Access denied, User with id: "
+                + id + " doesn`t exists!")));
     }
 
     @Override
@@ -104,14 +108,15 @@ public class UserServiceImpl implements UserService {
         if (userDto.getRole() != null) {
             return userDto.getRole();
         } else {
-            throw new GlobalNotFoundException("There is no such a role");
+            throw new GlobalNotFoundException("Role with id:" + id + " doesn`t exist!");
         }
     }
 
     @Override
     public RoleDto updateUserRole(RoleDto.RoleEnum roleDto, Long id) {
         UserEntity userEntity = getUserEntityById(id);
-        RoleEntity role = roleRepository.findByName(RoleEntity.RoleEnum.valueOf(roleDto.name())).orElseThrow(() -> new GlobalNotFoundException("There is no such role: " + roleDto.name()));
+        RoleEntity role = roleRepository.findByName(RoleEntity.RoleEnum.valueOf(roleDto.name())).orElseThrow(()
+                -> new GlobalNotFoundException("Role with name :" + roleDto.name() + " doesn`t exist!"));
         userEntity.setRole(role);
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity).getRole();
@@ -119,28 +124,36 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto changePassword(PasswordDto passwordDto, Long id) {
-        UserEntity userEntity = getUserEntityById(id);
+    public UserDto updatePassword(PasswordDto passwordDto) {
+        UserEntity userEntity = userMapper.userToEntity(getCurrentUser());
         userEntity.setPassword(passwordDto.getNewPassword());
         userRepository.save(userEntity);
         return userMapper.userToDto(userEntity);
     }
 
     public UserDto getUserByName(String name) {
-        return userMapper.userToDto(userRepository.findByName(name).orElseThrow(() -> new GlobalValidationException("Validation exception")));
+        return userMapper.userToDto(userRepository.findByName(name).orElseThrow(() -> new GlobalValidationException
+                ("User with name :" + name + " doesn`t exist!")));
 
     }
 
     @Override
     public UserDto getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails)principal).getUsername();
-//        SecurityUser securityUser = SecurityUser.fromPrincipal(principal);
-//        String username = securityUser.getUsername();
-        return userMapper.userToDto(userRepository.findByName(username).orElseThrow(() -> new GlobalValidationException("User is not authorized!")));
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal.getUsername();
+        return userMapper.userToDto(userRepository.findByName(username).orElseThrow(() -> new GlobalValidationException
+                ("User is not authorized!")));
+    }
+
+    @Override
+    public UserDto updateCurrentUser(UserDto userDto) {
+        UserDto currentUser = getCurrentUser();
+        UserEntity userEntity = userMapper.updateUser(currentUser, userDto);
+        userRepository.save(userEntity);
+        return userMapper.userToDto(userEntity);
     }
 
     private UserEntity getUserEntityById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("User doesn`t exist!"));
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
     UserDto createUser(UserDto userDto);
 
-    List<UserDto> getAllUsers(String sort, Integer page_num, Integer page_size);
+    List<UserDto> getAllUsers(Long id, String name,String sort, Integer page_num, Integer page_size);
 
     UserDto getUserById(Long id);
 
@@ -23,9 +23,11 @@ public interface UserService {
 
     RoleDto updateUserRole(RoleDto.RoleEnum roleDto, Long id);
 
-    UserDto changePassword(PasswordDto passwordDto, Long id);
-
-    UserDto getUserByName(String name);
+    UserDto updatePassword(PasswordDto passwordDto);
 
     UserDto getCurrentUser();
+
+    UserDto updateCurrentUser(UserDto userDto);
+
+    UserDto getUserByName(String name);
 }

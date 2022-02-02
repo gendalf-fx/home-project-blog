@@ -7,10 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vlog.entity.UserEntity;
-import org.vlog.exception.custom.GlobalNotFoundException;
-import org.vlog.exception.custom.GlobalValidationException;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Set;
 
@@ -65,11 +62,4 @@ public class SecurityUser implements UserDetails {
         );
     }
 
-    public static <T> SecurityUser fromPrincipal(T principal) {
-        if (!(principal instanceof UserDetails)) {
-            throw new GlobalNotFoundException("There isn`t instance of UserDetails");
-        }
-        return (SecurityUser) principal;
-
-    }
 }
