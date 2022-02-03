@@ -32,4 +32,22 @@ public class PostController {
                                      @RequestParam(defaultValue = "10") Integer page_size) {
         return postService.getPosts(id, tag_id, tag_name, author_name, sort, page_num, page_size);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("{id}")
+    public PostDto getPostById(@PathVariable Long id) {
+        return postService.getPostById(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("{id}")
+    public PostDto updatePostById(@PathVariable Long id, @RequestBody PostDto postDto) {
+        return postService.updatePost(postDto, id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("{id}")
+    public void removePostById(@PathVariable Long id) {
+        postService.removePost(id);
+    }
 }

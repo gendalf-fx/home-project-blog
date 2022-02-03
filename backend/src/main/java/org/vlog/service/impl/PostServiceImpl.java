@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.vlog.dto.PostDto;
-import org.vlog.dto.TagDto;
 import org.vlog.entity.PostEntity;
 import org.vlog.entity.TagEntity;
 import org.vlog.entity.UserEntity;
@@ -20,7 +19,9 @@ import org.vlog.service.PostService;
 import org.vlog.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -181,6 +182,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto updatePost(PostDto postDto, Long id) {
         PostDto oldPost = getPostById(id);
+        postDto.setUpdatedOn(LocalDateTime.now());
         PostEntity postEntity = postRepository.save(postMapper.updatePost(oldPost, postDto));
         return postMapper.toPostDto(postEntity);
     }
