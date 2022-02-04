@@ -2,13 +2,12 @@ package org.vlog.service.impl;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.vlog.dto.CommentDto;
 import org.vlog.dto.PasswordDto;
 import org.vlog.dto.RoleDto;
 import org.vlog.dto.UserDto;
@@ -16,14 +15,16 @@ import org.vlog.entity.RoleEntity;
 import org.vlog.entity.UserEntity;
 import org.vlog.exception.custom.GlobalNotFoundException;
 import org.vlog.exception.custom.GlobalValidationException;
+import org.vlog.mapper.CommentMapper;
 import org.vlog.mapper.UserMapper;
 import org.vlog.project.util.ProjectUtils;
+import org.vlog.repository.CommentRepository;
 import org.vlog.repository.RoleRepository;
 import org.vlog.repository.UserRepository;
+import org.vlog.service.CommentService;
 import org.vlog.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @Service
@@ -37,12 +38,17 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final CommentRepository commentRepository;
+
+
+
     public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, CommentRepository commentRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.commentRepository = commentRepository;
         roleRepository.saveAll(List.of(
                 new RoleEntity(null, RoleEntity.RoleEnum.MODERATOR), new RoleEntity(null, RoleEntity.RoleEnum.BLOGGER)));
         userRepository.save(new UserEntity("admin", "admin", passwordEncoder.encode("admin"),
@@ -76,7 +82,6 @@ public class UserServiceImpl implements UserService {
             return userMapper.userListToDto(userEntities);
         }
     }
-
 
 
     @Override
@@ -132,10 +137,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto getUserByName(String name) {
-        return userMapper.userToDto(userRepository.findByName(name).orElseThrow(() -> new GlobalValidationException
-                ("User with name :" + name + " doesn`t exist!")));
+        return userMapper.userToDto(userRepository.findByName(name).orElseThrow(() -> new GlobalNotFoundException
+                ("User with name : " + name + " doesn`t exist!")));
 
     }
+
+
 
     @Override
     public UserDto getCurrentUser() {
@@ -156,4 +163,6 @@ public class UserServiceImpl implements UserService {
     private UserEntity getUserEntityById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException("User doesn`t exist!"));
     }
+
+
 }

@@ -1,6 +1,7 @@
 package org.vlog.service;
 
 import org.springframework.stereotype.Service;
+import org.vlog.dto.CommentDto;
 import org.vlog.dto.PasswordDto;
 import org.vlog.dto.RoleDto;
 import org.vlog.dto.UserDto;
@@ -30,4 +31,5 @@ public interface UserService {
     UserDto updateCurrentUser(UserDto userDto);
 
     UserDto getUserByName(String name);
+
 }

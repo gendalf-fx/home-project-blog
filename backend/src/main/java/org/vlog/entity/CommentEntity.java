@@ -17,7 +17,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "`comment`")
 public class CommentEntity extends BaseEntity {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
@@ -31,7 +31,7 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "updated_on")
     private LocalDateTime updatedOn;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
     PostEntity post;
 

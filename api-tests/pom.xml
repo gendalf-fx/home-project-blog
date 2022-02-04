@@ -5,8 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.softserveinc.ita.home.blog</groupId>
-    <artifactId>api-tests</artifactId>
+   <artifactId>api-tests</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
+
 
     <name>api-tests</name>
     <description>Api test for the blog</description>
@@ -37,7 +39,7 @@
         <database.container.name>blog_db</database.container.name>
         <postgresdb.image>postgres:13.4-alpine</postgresdb.image>
         <db.hostname>blog-db.docker</db.hostname>
-        <blog.db.internal.url>jdbc:postgresql://${db.hostname}:${internal.db.port}/postgres</blog.db.internal.url>
+               <blog.db.internal.url>jdbc:postgresql://${db.hostname}:${internal.db.port}/postgres</blog.db.internal.url>
         <blog.db.user>postgres</blog.db.user>
         <blog.db.password>password</blog.db.password>
         <external.db.port>${random.external.db.port}</external.db.port>

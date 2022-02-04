@@ -1,9 +1,12 @@
 package org.vlog.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +18,8 @@ public class CommentDto {
     private UserDto user;
     @NonNull
     private String text;
-    private String createdOn;
-    private String updatedOn;
+    @NonNull
+    private PostDto post;
+    private LocalDateTime createdOn;
+    private LocalDateTime updatedOn;
 }

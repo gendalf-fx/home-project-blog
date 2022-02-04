@@ -34,8 +34,6 @@ public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
 
-    private final TagMapper tagMapper;
-
     private final TagRepository tagRepository;
 
     private final UserMapper userMapper;
@@ -110,44 +108,52 @@ public class PostServiceImpl implements PostService {
                                   String author_name, String sort, Integer page_num,
                                   Integer page_size) {
         if (id != null && tag_id != null && tag_name != null && author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByIdAndTagsAndUser(id,
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByIdAndTagsAndUser(id,
                             tagRepository.findTagEntityByIdAndName(tag_id, tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)),
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (id != null && tag_id != null && tag_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByIdAndTags(id,
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByIdAndTags(id,
                             tagRepository.findTagEntityByIdAndName(tag_id, tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
         } else if (id != null && tag_id != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByIdAndTags(id,
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByIdAndTags(id,
                             tagRepository.findById(tag_id).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (id != null && tag_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByIdAndTags(id,
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByIdAndTags(id,
                             tagRepository.findTagEntityByName(tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (id != null && author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByIdAndUser(id,
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByIdAndUser(id,
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (tag_id != null && tag_name != null && author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByTagsAndUser(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByTagsAndUser(
                             tagRepository.findTagEntityByIdAndName(tag_id, tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)),
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (tag_id != null && author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByTagsAndUser(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByTagsAndUser(
                             tagRepository.findById(tag_id).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)),
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
 
         } else if (tag_name != null && author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByTagsAndUser(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByTagsAndUser(
                             tagRepository.findTagEntityByName(tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)),
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
@@ -156,15 +162,18 @@ public class PostServiceImpl implements PostService {
             return List.of(postMapper.toPostDto(postRepository.findById(id).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND))));
 
         } else if (tag_id != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByTags(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByTags(
                             tagRepository.findById(tag_id).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
         } else if (tag_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByTags(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByTags(
                             tagRepository.findTagEntityByName(tag_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
         } else if (author_name != null) {
-            return postMapper.toPostDtoList(postRepository.findPostEntitiesByUser(
+            return postMapper.toPostDtoList(
+                    postRepository.findPostEntitiesByUser(
                             userRepository.findByName(author_name).orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)))
                     .orElseThrow(() -> new GlobalNotFoundException(POST_NOT_FOUND)));
         } else {
