@@ -26,6 +26,7 @@ public class RoleEntity {
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
 
+
     @Getter
     @AllArgsConstructor
     public enum RoleEnum {
